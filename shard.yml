@@ -1,0 +1,14 @@
+name: bar
+version: 0.1.0
+
+authors:
+  - Rien Maertens <rien.maertens@posteo.be>
+
+description: |
+  A bar walks into a crystal.
+
+targets:
+  bar:
+    main: bar.cr
+
+license: MIT
