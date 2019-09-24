@@ -16,7 +16,7 @@ class Bar
   def unread_mails
     unread = `notmuch search tag:unread AND tag:inbox`.lines.size
     return if unread.zero?
-    "\u{2709} #{mails}"
+    "\u{2709} #{unread}"
   end
 
   def temperature
@@ -58,7 +58,7 @@ class Bar
   def show
     @previous = @now
     @now = Time.monotonic
-    join_bar wired, wifi, temperature, battery, datetime
+    join_bar unread_mails, wired, wifi, temperature, battery, datetime
   end
 
   private def join_bar(*items)
