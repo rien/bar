@@ -16,7 +16,7 @@ class Bar
   def unread_mails
     unread = `notmuch search tag:unread AND tag:inbox`.lines.size
     return if unread.zero?
-    "\u{2709} #{unread}"
+    "\u{1F582} #{unread}"
   end
 
   def temperature
@@ -27,7 +27,7 @@ class Bar
   def wifi
     info = net_info "wlp"
     if info.nil?
-      "\u{1F4E1}"
+      "\u{1F4E1} \u{2205}"
     else
       rx, tx, ip = info
       "\u{1F4E1}#{ssid} #{ip} #{traffic rx, tx}"
