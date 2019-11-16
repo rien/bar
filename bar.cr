@@ -7,34 +7,44 @@ class Bar
 
   @now : Time::Span
   @previous : Time::Span
+  @proc_net_dev : String
 
   def initialize
     @now = Time.monotonic
     @previous = @now
+    @proc_net_dev = ""
   end
 
-  def unread_mails
+  def show
+    @previous = @now
+    @now = Time.monotonic
+    @proc_net_dev = File.read "/proc/net/dev"
+    join_bar unread_mails, wired, wifi, temperature, battery, datetime
+  end
+
+  private def unread_mails
     unread = `notmuch search tag:unread AND tag:inbox`.lines.size
     return if unread.zero?
     "\u{1F582} #{unread}"
   end
 
-  def temperature
+  private def temperature
     temp = `sensors`.lines[2].gsub(/.*?\+(.*?)\..*/, "\\1").to_i
     "#{temp}℃"
   end
 
-  def wifi
+  private def wifi
+    current_ssid = ssid
     info = net_info "wlp"
-    if info.nil?
+    if info.nil? || current_ssid.empty?
       "\u{1F4E1} \u{2205}"
     else
       rx, tx, ip = info
-      "\u{1F4E1}#{ssid} #{ip} #{traffic rx, tx}"
+      "\u{1F4E1}#{current_ssid} #{ip} #{traffic rx, tx}"
     end
   end
 
-  def wired
+  private def wired
     info = net_info "enp"
     if info.nil?
       "\u{1F5A7} \u{2205}"
@@ -44,21 +54,15 @@ class Bar
     end
   end
 
-  def datetime
+  private def datetime
     Time.now.to_s("%a %d %b, %H:%M ")
   end
 
-  def battery
+  private def battery
     battery_info = `acpi -b`.strip
     percent = battery_info.gsub(/.*?(\d+%).*/, "\\1")
     symbol = battery_info.includes?("Discharging") ? "🔋" : "🔌"
     "#{symbol} #{percent}"
-  end
-
-  def show
-    @previous = @now
-    @now = Time.monotonic
-    join_bar unread_mails, wired, wifi, temperature, battery, datetime
   end
 
   private def join_bar(*items)
@@ -66,8 +70,7 @@ class Bar
   end
 
   private def net_info(prefix)
-    net_info = File.read "/proc/net/dev"
-    line = net_info.lines.find { |l| l.strip.starts_with?(prefix) }
+    line = @proc_net_dev.lines.find { |l| l.strip.starts_with?(prefix) }
     return if line.nil?
     columns = line.split
     dev = columns[0].strip[0..-2]
