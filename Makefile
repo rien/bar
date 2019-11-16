@@ -5,7 +5,7 @@ INSTALL = /bin/install
 
 all: bin/bar
 
-bin/bar:
+bin/bar: *.cr
 	shards build
 
 .PHONY: clean
