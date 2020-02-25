@@ -23,7 +23,7 @@ class Bar
   end
 
   private def unread_mails
-    unread = `notmuch search tag:unread AND tag:inbox`.lines.size
+    unread = `notmuch count tag:unread AND tag:inbox AND NOT tag:feed`.to_i
     return if unread.zero?
     "\u{1F582} #{unread}"
   end
