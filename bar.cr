@@ -19,7 +19,7 @@ class Bar
     @previous = @now
     @now = Time.monotonic
     @proc_net_dev = File.read "/proc/net/dev"
-    join_bar unread_mails, mic, wired, wifi, temperature, battery, datetime
+    join_bar unread_mails, wired, wifi, temperature, battery, datetime
   end
 
   private def unread_mails
@@ -63,15 +63,6 @@ class Bar
     percent = battery_info.gsub(/.*?(\d+%).*/, "\\1")
     symbol = battery_info.includes?("Discharging") ? "🔋" : "🔌"
     "#{symbol} #{percent}"
-  end
-
-  private def mic
-    pulse_sources = `pactl list sources`
-    if pulse_sources.includes?("Mute: yes")
-      "\u{1F399} \u{274C}"
-    else
-      "\u{1F399} \u{23FA}"
-    end
   end
 
   private def join_bar(*items)
