@@ -23,13 +23,13 @@ class Bar
   end
 
   private def unread_mails
-    unread = `notmuch count tag:unread AND tag:inbox AND NOT tag:feed`.to_i
+    unread = `notmuch count --output=threads tag:unread AND tag:inbox AND NOT tag:feed`.to_i
     return if unread.zero?
     "\u{1F582} #{unread}"
   end
 
   private def temperature
-    temp = `sensors`.lines[2].gsub(/.*?\+(.*?)\..*/, "\\1").to_i
+    temp = `sensors`.lines[3].gsub(/.*?\+(.*?)\..*/, "\\1").to_i
     "#{temp}℃"
   end
 
